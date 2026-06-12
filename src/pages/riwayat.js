@@ -66,7 +66,7 @@ export const renderRiwayatTable = () => {
 
 export const lihatStruk = (id) => {
   const t = state.transactions.find(x => x.id === id)
-  if (t) showStruk(t)
+  if (t) showStruk(t, t.uangDiterima ?? 0)
 }
 
 export const openRetur = (id) => {
@@ -83,12 +83,12 @@ export const openRetur = (id) => {
   openModal('modalRetur')
 }
 
-export const konfirmasiRetur = () => {
+export const konfirmasiRetur = async () => {
   if (!returTrxId) return
   const alasan  = document.getElementById('returAlasan').value
   const catatan = document.getElementById('returCatatan').value
 
-  const ok = voidTransaction(returTrxId, alasan, catatan)
+  const ok = await voidTransaction(returTrxId, alasan, catatan)
   if (ok) {
     closeModal('modalRetur')
     renderRiwayatTable()

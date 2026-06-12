@@ -15,9 +15,6 @@ export const loadSettingForm = () => {
   set('settUsername',  s.username  || 'admin')
   set('settPassword',  '')
   set('settSessionTimeout', s.sessionTimeout ?? 30)
-
-  const darkToggle = document.getElementById('settDarkMode')
-  if (darkToggle) darkToggle.checked = !!s.darkMode
 }
 
 export const saveSetting = () => {

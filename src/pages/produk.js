@@ -151,8 +151,12 @@ export const previewCSV = (e) => {
   const r = new FileReader()
   r.onload = (ev) => {
     const lines = ev.target.result.split('\n').filter(l => l.trim())
+    // Deteksi separator: semicolon (Excel Indonesia) atau comma
+    const firstLine = lines[0] || ''
+    const sep = firstLine.includes(';') ? ';' : ','
+
     csvRows = lines.slice(1).map(l => {
-      const cols = l.split(',').map(c => c.trim().replace(/^"|"$/g, ''))
+      const cols = l.split(sep).map(c => c.trim().replace(/^"|"$/g, ''))
       return {
         nama: cols[0] || '', kategori: cols[1] || 'Lainnya',
         harga: parseInt(cols[2]) || 0, modal: parseInt(cols[3]) || 0,
@@ -162,7 +166,7 @@ export const previewCSV = (e) => {
     }).filter(r => r.nama && r.harga > 0)
 
     document.getElementById('csvPreview').textContent =
-      `${csvRows.length} produk siap diimport (dari ${lines.length - 1} baris data).`
+      `${csvRows.length} produk siap diimport (dari ${lines.length - 1} baris data). Separator: "${sep}"`
     document.getElementById('csvImportBtn').disabled = csvRows.length === 0
   }
   r.readAsText(file)

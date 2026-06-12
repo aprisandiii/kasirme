@@ -98,7 +98,12 @@ window.__kasirme.toggleDarkMode = async () => {
   }
 
   // Auto-logout jika sesi sebelumnya kedaluwarsa
-  await checkSessionExpiry()
+  const expired = await checkSessionExpiry()
+  if (expired) {
+    showLanding()
+    showToastDelayed('⏱️ Sesi sebelumnya telah berakhir. Silakan login kembali.')
+    return
+  }
 
   showLanding()
 })()

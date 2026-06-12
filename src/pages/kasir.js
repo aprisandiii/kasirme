@@ -231,6 +231,10 @@ export const checkout = () => {
   const total    = Math.max(0, subtotal - itemDisc - globalDisc)
   const pelanggan = document.getElementById('namaCustomer')?.value.trim() || 'Umum'
 
+  const diterima = payMethod === 'tunai'
+    ? (parseInt(document.getElementById('uangDiterima')?.value) || 0)
+    : 0
+
   if (!confirm(`Konfirmasi checkout?\nTotal: ${rp(total)}\nMetode: ${payMethod.toUpperCase()}\nPelanggan: ${pelanggan}`)) return
 
   const snap = cart.map(c => ({
@@ -247,6 +251,7 @@ export const checkout = () => {
     total,
     diskon:    globalDisc + itemDisc,
     metode:    payMethod,
+    uangDiterima: diterima,
     status:    'selesai',
   })
 
@@ -262,7 +267,7 @@ export const checkout = () => {
   // Simpan state
   save()
 
-  showStruk(state.transactions[state.transactions.length - 1])
+  showStruk(state.transactions[state.transactions.length - 1], diterima)
   closeCartModal()
   clearCart()
   renderKasirTiles()
@@ -271,7 +276,7 @@ export const checkout = () => {
 }
 
 // ── STRUK ─────────────────────────────────────────
-export const showStruk = (t) => {
+export const showStruk = (t, uangDiterimaOverride) => {
   const s = state.settings
   const line = '================================'
   let txt = `${s.namaToko}\n${s.alamat}\n${s.kota} | Telp: ${s.telp}\n${line}\n`
@@ -286,7 +291,8 @@ export const showStruk = (t) => {
   if (t.diskon > 0) txt += `Diskon : -${rp(t.diskon)}\n`
   txt += `TOTAL  : ${rp(t.total)}\n`
   if (t.metode === 'tunai') {
-    const dt = parseInt(document.getElementById('uangDiterima')?.value) || 0
+    // Jika dipanggil saat checkout, ambil dari field input; jika dari riwayat, gunakan nilai tersimpan
+    const dt = uangDiterimaOverride ?? (parseInt(document.getElementById('uangDiterima')?.value) || 0)
     if (dt > 0) txt += `Terima : ${rp(dt)}\nKembali: ${rp(Math.max(0, dt - t.total))}\n`
   }
   txt += `${line}\n\n${s.footer}\n`

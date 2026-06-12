@@ -34,7 +34,7 @@ export const showEl  = (el) => { if (el) el.classList.remove('hidden') }
 export const hideEl  = (el) => { if (el) el.classList.add('hidden') }
 export const toggleEl = (el, show) => show ? showEl(el) : hideEl(el)
 
-export const openModal  = (id) => $(` #${id}`)?.classList.remove('hidden')
+export const openModal  = (id) => $(`#${id}`)?.classList.remove('hidden')
 export const closeModal = (id) => $(`#${id}`)?.classList.add('hidden')
 export const closeAllModals = () =>
   $$('.modal-overlay').forEach(m => m.classList.add('hidden'))
@@ -52,7 +52,16 @@ export const showToast = (msg, type = 'green') => {
 
 // ── HOUR EXTRACTOR (untuk peak hours) ────────────
 export const hourOf = (waktu) => {
-  const m = waktu.match(/\d+[:.]\d+/g)
-  if (!m || !m[1]) return 0
-  return parseInt(m[1].split(/[:.]/)[0]) || 0
+  // Format id-ID: "12/6/2026, 11.38.41" → ambil bagian jam setelah koma
+  try {
+    const parts = waktu.split(', ')
+    if (parts.length >= 2) {
+      return parseInt(parts[1].split('.')[0]) || 0
+    }
+    // Fallback: cari pola HH.MM.SS
+    const m = waktu.match(/(\d{1,2})[.:](\d{2})[.:](\d{2})/)
+    return m ? parseInt(m[1]) : 0
+  } catch {
+    return 0
+  }
 }
