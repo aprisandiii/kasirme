@@ -103,7 +103,7 @@ const showLockedScreen = () => {
   const wa = document.getElementById('upgradeWhatsapp')
   if (wa) {
     const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nDevice ID: ${did}`)
-    wa.href = `https://wa.me/628XXXXXXXXXX?text=${msg}` // ← ganti nomor WA
+    wa.href = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
   }
 }
 
