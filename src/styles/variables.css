@@ -1,0 +1,55 @@
+:root {
+  --bg: #ffffff;
+  --bg2: #f7f8f9;
+  --bg3: #f0f1f3;
+  --txt: #1a1a1a;
+  --txt2: #6b7280;
+  --txt3: #9ca3af;
+  --bdr: rgba(0, 0, 0, 0.08);
+  --bdr2: rgba(0, 0, 0, 0.14);
+
+  --green: #1D9E75;
+  --green-dark: #0F6E56;
+  --green-light: #E1F5EE;
+  --green-text: #0F6E56;
+
+  --amber: #FAEEDA;
+  --amber-text: #854F0B;
+
+  --red: #FCEBEB;
+  --red-text: #A32D2D;
+
+  --blue: #E6F1FB;
+  --blue-text: #185FA5;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.14);
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Courier New', monospace;
+}
+
+/* ── DARK MODE ─────────────────────────────────── */
+html.dark {
+  --bg: #1c1f24;
+  --bg2: #242830;
+  --bg3: #16181c;
+  --txt: #e9eaec;
+  --txt2: #9aa0aa;
+  --txt3: #6b7280;
+  --bdr: rgba(255, 255, 255, 0.08);
+  --bdr2: rgba(255, 255, 255, 0.14);
+
+  --green-light: rgba(29, 158, 117, 0.16);
+  --amber: rgba(250, 238, 218, 0.12);
+  --red: rgba(252, 235, 235, 0.12);
+  --blue: rgba(230, 241, 251, 0.12);
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
+}

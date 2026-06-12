@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="KasirMe — Aplikasi kasir untuk UMKM. Kelola produk, transaksi, stok, dan laporan toko dengan mudah." />
+  <meta name="theme-color" content="#1D9E75" />
+  <title>KasirMe — Aplikasi Kasir untuk UMKM</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <script type="module" crossorigin src="/assets/index-W-9ZWFHo.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CT5sgkW2.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- PRINT AREA -->
+  <div id="printArea"></div>
+
+  <!-- TOAST -->
+  <div id="toastArea"></div>
+
+  <!-- ═══════════════════════════════════
+       LANDING SCREEN
+  ═══════════════════════════════════ -->
+  <div class="landing-screen" id="landingScreen">
+    <div class="landing-nav">
+      <div class="landing-logo"><i class="ti ti-shopping-cart"></i> KasirMe</div>
+      <button class="btn btn-primary" onclick="window.__kasirme.gotoLogin()">Masuk</button>
+    </div>
+    <div class="landing-hero">
+      <h1>Kelola Toko Lebih Mudah,<br/>Jualan Lebih Tenang</h1>
+      <p>KasirMe adalah aplikasi kasir gratis untuk UMKM — kelola produk, transaksi,
+         stok, dan laporan keuangan toko kamu, semua dari browser tanpa perlu internet.</p>
+      <div class="landing-cta">
+        <button class="btn btn-primary btn-lg" onclick="window.__kasirme.gotoLogin()">
+          <i class="ti ti-login"></i> Mulai Sekarang
+        </button>
+        <a class="btn btn-lg" href="/KasirMe_Tutorial.pdf" target="_blank">
+          <i class="ti ti-book"></i> Lihat Tutorial
+        </a>
+      </div>
+    </div>
+    <div class="landing-features">
+      <div class="landing-feature">
+        <i class="ti ti-shopping-cart"></i>
+        <h3>Kasir Cepat</h3>
+        <p>Transaksi cepat dengan pencarian produk, diskon, dan beberapa metode pembayaran.</p>
+      </div>
+      <div class="landing-feature">
+        <i class="ti ti-chart-bar"></i>
+        <h3>Laporan Lengkap</h3>
+        <p>Pantau penjualan, laba/rugi, dan jam ramai toko kamu secara real-time.</p>
+      </div>
+      <div class="landing-feature">
+        <i class="ti ti-adjustments"></i>
+        <h3>Manajemen Stok</h3>
+        <p>Catat stok masuk/keluar dan dapatkan notifikasi saat stok hampir habis.</p>
+      </div>
+      <div class="landing-feature">
+        <i class="ti ti-shield-lock"></i>
+        <h3>Data Aman</h3>
+        <p>Semua data tersimpan aman di perangkat kamu sendiri, dengan backup mudah.</p>
+      </div>
+    </div>
+    <div class="landing-footer">
+      KasirMe v1.2 — Dibuat untuk UMKM Indonesia
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       FIRST-RUN SETUP WIZARD
+  ═══════════════════════════════════ -->
+  <div class="login-screen" id="setupScreen" style="display:none">
+    <div class="login-box">
+      <div class="login-logo">KasirMe</div>
+      <div class="login-sub">Setup Awal — Buat akun admin toko kamu</div>
+      <div id="setupErr"></div>
+      <div class="form-row">
+        <label class="form-label">Nama Toko *</label>
+        <input type="text" id="setupNamaToko" placeholder="Contoh: Toko Berkah Jaya" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Username Admin *</label>
+        <input type="text" id="setupUsername" placeholder="admin" value="admin" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Password *</label>
+        <input type="password" id="setupPassword" placeholder="Minimal 6 karakter" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Konfirmasi Password *</label>
+        <input type="password" id="setupPassword2" placeholder="Ulangi password" />
+      </div>
+      <button class="btn btn-primary btn-block btn-lg" style="margin-top:4px"
+        onclick="window.__kasirme.completeSetup()">
+        <i class="ti ti-rocket"></i> Mulai Gunakan KasirMe
+      </button>
+      <button class="btn btn-block" style="margin-top:8px" onclick="window.__kasirme.skipSetup()">
+        Lewati (gunakan akun default)
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       LOGIN SCREEN
+  ═══════════════════════════════════ -->
+  <div class="login-screen" id="loginScreen" style="display:none">
+    <div class="login-box">
+      <div class="login-logo">KasirMe</div>
+      <div class="login-sub">Kelola Toko Lebih Mudah, Jualan Lebih Tenang</div>
+      <div id="loginErr"></div>
+      <div class="form-row">
+        <label class="form-label">Username</label>
+        <input type="text" id="loginUser" autocomplete="username" />
+      </div>
+      <div class="form-row">
+        <label class="form-label">Password</label>
+        <input type="password" id="loginPass"
+          autocomplete="current-password"
+          onkeydown="if(event.key==='Enter') window.__kasirme.doLogin()" />
+      </div>
+      <button class="btn btn-primary btn-block btn-lg" style="margin-top:4px"
+        onclick="window.__kasirme.doLogin()">
+        <i class="ti ti-login"></i> Masuk
+      </button>
+      <button class="btn btn-block" style="margin-top:8px" onclick="window.__kasirme.gotoLanding()">
+        <i class="ti ti-arrow-left"></i> Kembali
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       APP SHELL
+  ═══════════════════════════════════ -->
+  <div class="app" id="appShell" style="display:none">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-title">KasirMe</div>
+        <div class="sidebar-logo-sub">Kelola toko lebih mudah</div>
+      </div>
+      <div class="sidebar-nav">
+        <button class="nav-item active" onclick="window.__kasirme.gotoPage('dashboard', this)">
+          <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="window.__kasirme.gotoPage('produk', this)">
+          <i class="ti ti-box"></i><span>Produk</span>
+        </button>
+        <button class="nav-item" onclick="window.__kasirme.gotoPage('kasir', this)">
+          <i class="ti ti-shopping-cart"></i><span>Kasir</span>
+          <span class="nav-badge" id="cartBadge" style="display:none">0</span>
+        </button>
+        <button class="nav-item" onclick="window.__kasirme.gotoPage('riwayat', this)">
+          <i class="ti ti-history"></i><span>Riwayat</span>
+        </button>
+        <button class="nav-item" onclick="window.__kasirme.gotoPage('laporan', this)">
+          <i class="ti ti-chart-bar"></i><span>Laporan</span>
+        </button>
+        <button class="nav-item" onclick="window.__kasirme.gotoPage('stok', this)">
+          <i class="ti ti-adjustments"></i><span>Stok</span>
+          <span class="nav-badge nav-badge-amber" id="lowStokBadge" style="display:none">0</span>
+        </button>
+        <button class="nav-item" onclick="window.__kasirme.gotoPage('pengaturan', this)">
+          <i class="ti ti-settings"></i><span>Pengaturan</span>
+        </button>
+        <div class="nav-spacer"></div>
+        <button class="nav-item" onclick="window.__kasirme.toggleDarkMode()">
+          <i class="ti ti-moon"></i><span>Mode Gelap</span>
+        </button>
+        <button class="nav-item nav-logout" onclick="window.__kasirme.doLogout()">
+          <i class="ti ti-logout"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-title" id="pageTitle">Dashboard</span>
+        </div>
+        <div class="topbar-right">
+          <span class="topbar-date" id="topDate"></span>
+          <div class="user-badge" id="userBadge">AD</div>
+        </div>
+      </div>
+
+      <!-- ─── DASHBOARD ───────────────────────── -->
+      <div id="page-dashboard" class="page-content">
+        <div class="grid4" style="margin-bottom:16px">
+          <div class="metric-card">
+            <div class="metric-label"><i class="ti ti-cash"></i> Penjualan Hari Ini</div>
+            <div class="metric-value metric-green" id="d-today">Rp 0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label"><i class="ti ti-receipt"></i> Transaksi Hari Ini</div>
+            <div class="metric-value" id="d-trx">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label"><i class="ti ti-trending-up"></i> Laba Hari Ini</div>
+            <div class="metric-value metric-green" id="d-laba">Rp 0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label"><i class="ti ti-alert-triangle"></i> Stok Hampir Habis</div>
+            <div class="metric-value metric-amber" id="d-lowstok">0</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <div class="section-title">Penjualan 7 hari terakhir</div>
+            <div class="chart-bar-wrap" id="weekChart"></div>
+          </div>
+          <div class="card">
+            <div class="section-title">Transaksi terbaru</div>
+            <div id="recentTrx"></div>
+          </div>
+        </div>
+        <div id="lowstokAlert" style="margin-top:14px"></div>
+      </div>
+
+      <!-- ─── PRODUK ──────────────────────────── -->
+      <div id="page-produk" class="page-content hidden">
+        <div class="search-bar">
+          <input type="text" placeholder="🔍 Cari nama / kode / kategori..."
+            id="searchProduk" oninput="window.__kasirme.renderProdukTable?.() ?? null" />
+          <button class="btn" onclick="window.__kasirme.openImportCSV()">
+            <i class="ti ti-file-import"></i> Import CSV
+          </button>
+          <button class="btn btn-primary" onclick="window.__kasirme.openModalTambahProduk()">
+            <i class="ti ti-plus"></i> Tambah Produk
+          </button>
+        </div>
+        <div class="card card-flush">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Produk</th><th>Kategori</th><th>Harga Jual</th>
+                <th>Modal</th><th>Stok</th><th>Status</th><th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="produkTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── KASIR ───────────────────────────── -->
+      <div id="page-kasir" class="page-content hidden">
+        <div class="kasir-wrap">
+          <div class="kasir-products">
+            <div class="search-bar">
+              <input type="text" placeholder="🔍 Cari / scan kode produk..."
+                id="searchKasir" oninput="window.__kasirme.renderKasirTiles?.() ?? null" />
+            </div>
+            <div class="products-scroll">
+              <div class="produk-grid" id="kasirTiles"></div>
+            </div>
+          </div>
+
+          <!-- CART PANEL -->
+          <div class="cart-panel">
+            <div class="cart-title"><i class="ti ti-shopping-cart"></i> Keranjang</div>
+            <div class="cart-items" id="cartItems"></div>
+
+            <div class="divider"></div>
+
+            <!-- Diskon transaksi -->
+            <div style="margin-bottom:10px">
+              <div class="pay-section-label">Diskon Transaksi</div>
+              <div class="disc-row">
+                <input type="number" id="discVal" placeholder="0" min="0"
+                  oninput="window.__kasirme.renderCartTotals()" />
+                <select id="discType" onchange="window.__kasirme.renderCartTotals()">
+                  <option value="nominal">Rp</option>
+                  <option value="persen">%</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="cart-totals">
+              <div class="stat-row"><span>Subtotal</span><span id="cartSubtotal">Rp 0</span></div>
+              <div class="stat-row" id="discRow" style="display:none;color:var(--red-text)">
+                <span>Diskon</span><span id="cartDisc">-Rp 0</span>
+              </div>
+              <div class="stat-row total"><span>Total</span><span id="cartTotal">Rp 0</span></div>
+            </div>
+
+            <!-- Metode bayar -->
+            <div style="margin-top:12px">
+              <div class="pay-section-label">Metode Bayar</div>
+              <div class="pay-methods">
+                <button class="pay-btn active" id="pay-tunai"
+                  onclick="window.__kasirme.setPayMethod('tunai')">
+                  <i class="ti ti-cash"></i>Tunai
+                </button>
+                <button class="pay-btn" id="pay-qris"
+                  onclick="window.__kasirme.setPayMethod('qris')">
+                  <i class="ti ti-qrcode"></i>QRIS
+                </button>
+                <button class="pay-btn" id="pay-transfer"
+                  onclick="window.__kasirme.setPayMethod('transfer')">
+                  <i class="ti ti-building-bank"></i>Transfer
+                </button>
+              </div>
+            </div>
+
+            <!-- Uang diterima (tunai) -->
+            <div id="tunaiArea" style="margin-bottom:8px">
+              <div class="pay-section-label">Uang Diterima (Rp)</div>
+              <input type="number" id="uangDiterima" placeholder="Nominal uang..."
+                oninput="window.__kasirme.hitungKembalian()" min="0" />
+              <div class="kembalian-box" id="kembalianBox" style="display:none">
+                <span>Kembalian</span><span id="kembalianVal">Rp 0</span>
+              </div>
+            </div>
+
+            <input type="text" placeholder="Nama pelanggan (opsional)"
+              id="namaCustomer" style="margin-bottom:8px" />
+            <div style="display:flex;gap:8px">
+              <button class="btn" style="flex:1" onclick="window.__kasirme.clearCart()">
+                <i class="ti ti-trash"></i> Batal
+              </button>
+              <button class="btn btn-primary" style="flex:1" onclick="window.__kasirme.checkout()">
+                <i class="ti ti-check"></i> Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── RIWAYAT ──────────────────────────── -->
+      <div id="page-riwayat" class="page-content hidden">
+        <div class="search-bar">
+          <input type="text" placeholder="🔍 Cari ID, pelanggan, produk..."
+            id="searchRiwayat" oninput="window.__kasirme.renderRiwayatTable?.() ?? null" />
+          <input type="date" id="filterTgl" style="width:160px"
+            onchange="window.__kasirme.renderRiwayatTable?.()" />
+          <button class="btn" onclick="
+            document.getElementById('filterTgl').value='';
+            window.__kasirme.renderRiwayatTable?.()">
+            Reset
+          </button>
+        </div>
+        <div class="card card-flush">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Waktu</th><th>Pelanggan</th>
+                <th>Items</th><th>Metode</th><th>Total</th><th>Status</th><th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="riwayatTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── LAPORAN ──────────────────────────── -->
+      <div id="page-laporan" class="page-content hidden">
+        <div class="search-bar" style="margin-bottom:14px">
+          <select id="laporanPeriod" onchange="window.__kasirme.onPeriodChange()" style="width:auto">
+            <option value="harian">Harian</option>
+            <option value="mingguan">Mingguan</option>
+            <option value="bulanan">Bulanan</option>
+            <option value="custom">Rentang Custom</option>
+          </select>
+          <input type="date" id="laporanHari" onchange="window.__kasirme.renderLaporan?.()" />
+          <input type="month" id="laporanBulan" class="hidden"
+            onchange="window.__kasirme.renderLaporan?.()" />
+          <div id="customRange" style="display:none;gap:6px;align-items:center">
+            <input type="date" id="customFrom" style="width:150px"
+              onchange="window.__kasirme.renderLaporan?.()" />
+            <span style="font-size:12px;color:var(--txt2)">s/d</span>
+            <input type="date" id="customTo" style="width:150px"
+              onchange="window.__kasirme.renderLaporan?.()" />
+          </div>
+          <button class="btn" onclick="window.__kasirme.exportCSV()">
+            <i class="ti ti-download"></i> Ekspor CSV
+          </button>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active"
+            onclick="window.__kasirme.switchLaporanTab('penjualan', this)">Penjualan</button>
+          <button class="tab-btn"
+            onclick="window.__kasirme.switchLaporanTab('produk', this)">Produk</button>
+          <button class="tab-btn"
+            onclick="window.__kasirme.switchLaporanTab('laba', this)">Laba/Rugi</button>
+          <button class="tab-btn"
+            onclick="window.__kasirme.switchLaporanTab('waktu', this)">Peak Hours</button>
+        </div>
+
+        <div id="laporan-penjualan">
+          <div class="grid4">
+            <div class="metric-card"><div class="metric-label">Total Pendapatan</div>
+              <div class="metric-value metric-green" id="l-total">Rp 0</div></div>
+            <div class="metric-card"><div class="metric-label">Jumlah Transaksi</div>
+              <div class="metric-value" id="l-trx">0</div></div>
+            <div class="metric-card"><div class="metric-label">Item Terjual</div>
+              <div class="metric-value" id="l-item">0</div></div>
+            <div class="metric-card"><div class="metric-label">Rata-rata / Trx</div>
+              <div class="metric-value" id="l-avg">Rp 0</div></div>
+          </div>
+        </div>
+
+        <div id="laporan-produk" class="hidden">
+          <div class="card card-flush">
+            <table>
+              <thead><tr><th>#</th><th>Produk</th><th>Qty</th>
+                <th>Pendapatan</th><th>Modal</th><th>Laba</th></tr></thead>
+              <tbody id="laporanProdukTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="laporan-laba" class="hidden">
+          <div class="grid3" style="margin-bottom:14px">
+            <div class="metric-card"><div class="metric-label">Total Pendapatan</div>
+              <div class="metric-value metric-green" id="ll-pendapatan">Rp 0</div></div>
+            <div class="metric-card"><div class="metric-label">Total Modal</div>
+              <div class="metric-value metric-amber" id="ll-modal">Rp 0</div></div>
+            <div class="metric-card"><div class="metric-label">Laba Bersih</div>
+              <div class="metric-value" id="ll-laba">Rp 0</div></div>
+          </div>
+          <div class="card card-flush">
+            <table>
+              <thead><tr><th>Produk</th><th>Qty</th><th>Pendapatan</th>
+                <th>Modal</th><th>Laba</th><th>Margin</th></tr></thead>
+              <tbody id="laporanLabaTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="laporan-waktu" class="hidden">
+          <div class="card">
+            <div class="section-title">Distribusi transaksi per jam</div>
+            <div id="peakChart" style="display:flex;align-items:flex-end;gap:3px;height:90px;margin-top:8px"></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt2);margin-top:4px">
+              <span>00.00</span><span>06.00</span><span>12.00</span><span>18.00</span><span>23.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── STOK ─────────────────────────────── -->
+      <div id="page-stok" class="page-content hidden">
+        <div class="grid2" style="align-items:start">
+          <div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:14px">Penyesuaian Stok</div>
+            <div class="card">
+              <div class="form-row">
+                <label class="form-label">Pilih Produk</label>
+                <select id="stokProdukSel" onchange="window.__kasirme.updateStokInfo()">
+                  <option value="">-- pilih produk --</option>
+                </select>
+              </div>
+              <div id="stokCurrentInfo" style="font-size:13px;color:var(--txt2);margin-bottom:12px;display:none">
+                Stok saat ini: <strong id="stokCurrentVal">0</strong>
+              </div>
+              <div class="form-row">
+                <label class="form-label">Jenis Penyesuaian</label>
+                <select id="stokJenis">
+                  <option value="masuk">+ Stok Masuk (beli barang)</option>
+                  <option value="keluar">− Stok Keluar (barang hilang/rusak)</option>
+                  <option value="koreksi">= Koreksi Manual (set ke nilai)</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">Jumlah</label>
+                <input type="number" id="stokJumlah" placeholder="0" min="1" />
+              </div>
+              <div class="form-row">
+                <label class="form-label">Keterangan</label>
+                <input type="text" id="stokKet"
+                  placeholder="Contoh: Restock dari supplier, barang expired..." />
+              </div>
+              <button class="btn btn-primary" onclick="window.__kasirme.simpanPenyesuaianStok()">
+                <i class="ti ti-check"></i> Simpan Penyesuaian
+              </button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:14px">Riwayat Perubahan Stok</div>
+            <div class="card card-flush" style="max-height:500px;overflow-y:auto">
+              <div id="stokLogList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PENGATURAN ───────────────────────── -->
+      <div id="page-pengaturan" class="page-content hidden">
+        <div id="settingAlert"></div>
+        <div class="grid2">
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="section-title">Informasi Toko</div>
+              <div class="form-row"><label class="form-label">Nama Toko</label>
+                <input type="text" id="settNamaToko" /></div>
+              <div class="form-row"><label class="form-label">Alamat</label>
+                <textarea rows="2" id="settAlamat"></textarea></div>
+              <div class="form-row"><label class="form-label">No. Telepon</label>
+                <input type="text" id="settTelp" /></div>
+              <div class="form-row"><label class="form-label">Kota</label>
+                <input type="text" id="settKota" /></div>
+              <div class="form-row"><label class="form-label">Footer Struk</label>
+                <input type="text" id="settFooter" /></div>
+              <button class="btn btn-primary" onclick="window.__kasirme.saveSetting()">
+                <i class="ti ti-device-floppy"></i> Simpan
+              </button>
+            </div>
+            <div class="card">
+              <div class="section-title">Kategori Produk</div>
+              <div id="kategoriList" style="margin-bottom:10px"></div>
+              <div style="display:flex;gap:8px">
+                <input type="text" id="newKatInput" placeholder="Nama kategori baru..." style="flex:1" />
+                <button class="btn btn-primary" onclick="window.__kasirme.tambahKategori()">
+                  <i class="ti ti-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="section-title">Akun Admin</div>
+              <div class="form-row"><label class="form-label">Nama Tampilan</label>
+                <input type="text" id="settAdminNama" /></div>
+              <div class="form-row"><label class="form-label">Username</label>
+                <input type="text" id="settUsername" /></div>
+              <div class="form-row"><label class="form-label">Password Baru</label>
+                <input type="password" id="settPassword" placeholder="Kosongkan jika tidak diubah (min. 6 karakter)" /></div>
+              <button class="btn btn-primary" onclick="window.__kasirme.updateAkun()">
+                <i class="ti ti-user-check"></i> Perbarui Akun
+              </button>
+            </div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="section-title">Keamanan</div>
+              <div class="form-row">
+                <label class="form-label">Logout Otomatis Setelah Tidak Aktif (menit)</label>
+                <select id="settSessionTimeout">
+                  <option value="0">Tidak pernah</option>
+                  <option value="5">5 menit</option>
+                  <option value="15">15 menit</option>
+                  <option value="30">30 menit</option>
+                  <option value="60">60 menit</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="window.__kasirme.saveSessionTimeout()">
+                <i class="ti ti-device-floppy"></i> Simpan
+              </button>
+            </div>
+            <div class="card">
+              <div class="section-title">Data Aplikasi</div>
+              <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">
+                Data disimpan secara lokal di perangkat ini menggunakan IndexedDB —
+                kapasitas besar dan lebih tahan lama dibanding penyimpanan browser biasa.
+                Lakukan ekspor backup secara berkala untuk keamanan data.
+              </p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn" onclick="window.__kasirme.exportData()">
+                  <i class="ti ti-download"></i> Ekspor Backup
+                </button>
+                <button class="btn btn-warning" onclick="window.__kasirme.importData()">
+                  <i class="ti ti-upload"></i> Import Backup
+                </button>
+                <button class="btn btn-danger" onclick="window.__kasirme.resetData()">
+                  <i class="ti ti-trash"></i> Reset Data
+                </button>
+              </div>
+              <input type="file" id="importFileInput" accept=".json" style="display:none"
+                onchange="window.__kasirme.handleImportFile(event)" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── 404 NOT FOUND ────────────────────── -->
+      <div id="page-notfound" class="page-content hidden">
+        <div class="empty-state" style="padding:60px 20px">
+          <i class="ti ti-error-404" style="font-size:48px"></i>
+          <p style="font-size:18px;font-weight:600;margin-top:12px">Halaman tidak ditemukan</p>
+          <p style="color:var(--txt2);margin-top:6px">Halaman yang kamu cari tidak ada atau telah dipindahkan.</p>
+          <button class="btn btn-primary" style="margin-top:16px"
+            onclick="window.__kasirme.gotoPage('dashboard', document.querySelector('.nav-item'))">
+            <i class="ti ti-home"></i> Kembali ke Dashboard
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /appShell -->
+
+  <!-- ═══════════════════════════════════
+       MODALS
+  ═══════════════════════════════════ -->
+
+  <!-- Modal: Tambah/Edit Produk -->
+  <div class="modal-overlay hidden" id="modalProduk">
+    <div class="modal">
+      <div class="modal-title" id="modalProdukTitle">Tambah Produk</div>
+      <div class="form-row"><label class="form-label">Nama Produk *</label>
+        <input type="text" id="mpNama" placeholder="Nama produk" /></div>
+      <div class="form-row"><label class="form-label">Kategori</label>
+        <select id="mpKategori"></select></div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Harga Jual (Rp) *</label>
+          <input type="number" id="mpHarga" placeholder="0" min="0" /></div>
+        <div class="form-row"><label class="form-label">Harga Modal (Rp)</label>
+          <input type="number" id="mpModal" placeholder="0" min="0" /></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">Stok</label>
+          <input type="number" id="mpStok" placeholder="0" min="0" /></div>
+        <div class="form-row"><label class="form-label">Stok Minimum</label>
+          <input type="number" id="mpStokMin" placeholder="5" min="0" /></div>
+      </div>
+      <div class="form-row"><label class="form-label">Kode / Barcode</label>
+        <input type="text" id="mpKode" placeholder="Opsional" /></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="window.__kasirme.closeModalProduk()">Batal</button>
+        <button class="btn btn-primary" onclick="window.__kasirme.simpanProduk()">
+          <i class="ti ti-device-floppy"></i> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Struk -->
+  <div class="modal-overlay hidden" id="modalStruk">
+    <div class="modal modal-sm">
+      <div class="modal-title">
+        <i class="ti ti-receipt" style="color:var(--green)"></i> Struk Pembelian
+      </div>
+      <div class="struk-box" id="strukContent"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="window.__kasirme.closeModal('modalStruk')">Tutup</button>
+        <button class="btn btn-primary" onclick="window.__kasirme.printStruk()">
+          <i class="ti ti-printer"></i> Cetak
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Retur -->
+  <div class="modal-overlay hidden" id="modalRetur">
+    <div class="modal">
+      <div class="modal-title">
+        <i class="ti ti-arrow-back" style="color:var(--red-text)"></i> Retur / Void Transaksi
+      </div>
+      <div id="returInfo" style="font-size:13px;color:var(--txt2);margin-bottom:14px"></div>
+      <div class="form-row">
+        <label class="form-label">Alasan Retur</label>
+        <select id="returAlasan">
+          <option>Kesalahan input kasir</option>
+          <option>Barang rusak / cacat</option>
+          <option>Pelanggan berubah pikiran</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Catatan (opsional)</label>
+        <input type="text" id="returCatatan" placeholder="Keterangan tambahan..." />
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="window.__kasirme.closeModal('modalRetur')">Batal</button>
+        <button class="btn btn-danger" onclick="window.__kasirme.konfirmasiRetur()">
+          <i class="ti ti-arrow-back"></i> Proses Retur
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Import CSV -->
+  <div class="modal-overlay hidden" id="modalImportCSV">
+    <div class="modal">
+      <div class="modal-title">
+        <i class="ti ti-file-import" style="color:var(--green)"></i> Import Produk dari CSV
+      </div>
+      <div class="alert alert-amber" style="font-size:12px;margin-bottom:12px">
+        Format kolom: <strong>nama, kategori, harga_jual, harga_modal, stok, stok_min, kode</strong><br />
+        Baris pertama = header (akan diabaikan).
+      </div>
+      <div class="form-row">
+        <label class="form-label">Pilih File CSV</label>
+        <input type="file" id="csvFileInput" accept=".csv"
+          onchange="window.__kasirme.previewCSV(event)" />
+      </div>
+      <div id="csvPreview" style="font-size:12px;color:var(--txt2);margin-bottom:10px"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="window.__kasirme.closeModal('modalImportCSV')">Batal</button>
+        <button class="btn btn-primary" id="csvImportBtn"
+          onclick="window.__kasirme.importCSV()" disabled>
+          <i class="ti ti-upload"></i> Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+</body>
+</html>
