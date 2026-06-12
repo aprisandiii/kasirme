@@ -7,6 +7,7 @@ import './styles/pages.css'
 import { load, seed, state, updateSettings }  from './modules/state.js'
 import { storage, migrateFromLocalStorage }    from './modules/storage.js'
 import { renderLogin, doLogin, checkSessionExpiry } from './modules/auth.js'
+import { initTrial, saveTrialEmail, getDeviceIdPublic } from './modules/trial.js'
 import './app.js'
 
 // ── FIRST RUN SETUP WIZARD ────────────────────────
@@ -84,6 +85,62 @@ window.__kasirme.toggleDarkMode = async () => {
   applyTheme()
 }
 
+// ── TRIAL SYSTEM ───────────────────────────────────
+let _trialInfo = null
+
+const showLockedScreen = () => {
+  document.getElementById('lockedScreen').style.display = 'flex'
+  document.getElementById('appShell').style.display     = 'none'
+  document.getElementById('loginScreen').style.display  = 'none'
+  document.getElementById('landingScreen').style.display = 'none'
+
+  // Tampilkan device ID sebagai referensi untuk support
+  const did = getDeviceIdPublic()
+  const el  = document.getElementById('upgradeDeviceId')
+  if (el) el.textContent = `Device ID: ${did}`
+
+  // Isi link WhatsApp (ganti nomor sesuai milik Anda)
+  const wa = document.getElementById('upgradeWhatsapp')
+  if (wa) {
+    const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nDevice ID: ${did}`)
+    wa.href = `https://wa.me/628XXXXXXXXXX?text=${msg}` // ← ganti nomor WA
+  }
+}
+
+const showTrialBanner = (daysLeft) => {
+  const banner = document.getElementById('trialBanner')
+  const dlEl   = document.getElementById('trialDaysLeft')
+  if (!banner) return
+  if (dlEl) dlEl.textContent = daysLeft
+  banner.style.display = 'flex'
+  // Tambah padding bawah ke app shell agar konten tidak tertutup banner
+  const shell = document.getElementById('appShell')
+  if (shell) shell.style.paddingBottom = '50px'
+}
+
+window.__kasirme.showUpgradeScreen = () => showLockedScreen()
+
+window.__kasirme.requestUpgrade = async () => {
+  const emailEl = document.getElementById('upgradeEmail')
+  const email   = emailEl?.value?.trim()
+  if (!email || !email.includes('@')) {
+    document.getElementById('upgradeEmailHint').style.display = 'block'
+    return
+  }
+  try {
+    await saveTrialEmail(email)
+    const did = getDeviceIdPublic()
+    const wa  = document.getElementById('upgradeWhatsapp')
+    if (wa) {
+      const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nEmail: ${email}\nDevice ID: ${did}`)
+      wa.href = `https://wa.me/628XXXXXXXXXX?text=${msg}` // ← ganti nomor WA
+      wa.click()
+    }
+  } catch {
+    alert('Gagal menyimpan email. Silakan coba lagi atau hubungi kami langsung.')
+  }
+}
+
 // ── BOOT ─────────────────────────────────────────
 ;(async () => {
   await migrateFromLocalStorage()
@@ -91,13 +148,21 @@ window.__kasirme.toggleDarkMode = async () => {
   await seed()
   applyTheme()
 
+  // --- Cek status trial dari Supabase ---
+  _trialInfo = await initTrial()
+
+  if (_trialInfo.status === 'expired') {
+    showLockedScreen()
+    return
+  }
+
+  // Trial masih aktif → lanjut flow normal
   const firstRun = await storage.isFirstRun()
   if (firstRun) {
     showFirstRunSetup()
     return
   }
 
-  // Auto-logout jika sesi sebelumnya kedaluwarsa
   const expired = await checkSessionExpiry()
   if (expired) {
     showLanding()
@@ -106,6 +171,16 @@ window.__kasirme.toggleDarkMode = async () => {
   }
 
   showLanding()
+
+  // Tampilkan banner trial jika masih aktif (bukan paid)
+  if (_trialInfo.status === 'active') {
+    // Banner baru muncul setelah user login masuk ke appShell
+    const origOnLoginSuccess = window.__kasirme._onLoginSuccessCb
+    window.__kasirme._onLoginSuccessCb = () => {
+      showTrialBanner(_trialInfo.daysLeft)
+      origOnLoginSuccess?.()
+    }
+  }
 })()
 
 // ── PWA: Register Service Worker ──────────────────

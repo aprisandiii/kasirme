@@ -610,6 +610,116 @@
   </div><!-- /appShell -->
 
   <!-- ═══════════════════════════════════
+       TRIAL BANNER (muncul di dalam app saat trial aktif)
+  ═══════════════════════════════════ -->
+  <div id="trialBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9000;
+       background:linear-gradient(90deg,#f59e0b,#ef4444);color:#fff;
+       padding:10px 16px;display:none;align-items:center;justify-content:space-between;
+       font-size:13px;font-weight:600;gap:12px;">
+    <span id="trialBannerText">⏳ Masa trial Anda tersisa <b id="trialDaysLeft">7</b> hari</span>
+    <button onclick="window.__kasirme.showUpgradeScreen()"
+      style="background:#fff;color:#ef4444;border:none;border-radius:6px;
+             padding:6px 14px;font-weight:700;cursor:pointer;white-space:nowrap;">
+      Upgrade Sekarang
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       LAYAR TERKUNCI (trial habis)
+  ═══════════════════════════════════ -->
+  <div id="lockedScreen" style="display:none;position:fixed;inset:0;z-index:99999;
+       background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);
+       color:#fff;flex-direction:column;align-items:center;justify-content:center;
+       text-align:center;padding:24px;">
+
+    <div style="max-width:400px;width:100%;">
+      <!-- Icon kunci -->
+      <div style="font-size:64px;margin-bottom:16px;">🔒</div>
+      <h2 style="font-size:24px;font-weight:800;margin:0 0 8px;">Masa Trial Telah Berakhir</h2>
+      <p style="color:#94a3b8;margin:0 0 32px;line-height:1.6;">
+        Terima kasih sudah mencoba <strong style="color:#fff;">KasirMe</strong>!
+        Untuk melanjutkan menggunakan semua fitur, silakan upgrade ke paket berbayar.
+      </p>
+
+      <!-- Paket -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+                    border-radius:12px;padding:16px;text-align:left;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:700;font-size:15px;">📦 Paket Basic</div>
+              <div style="color:#94a3b8;font-size:13px;margin-top:2px;">1 Toko • Semua Fitur</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:18px;font-weight:800;color:#34d399;">Rp 49.000</div>
+              <div style="color:#94a3b8;font-size:12px;">/bulan</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(99,102,241,0.15);border:2px solid #6366f1;
+                    border-radius:12px;padding:16px;text-align:left;position:relative;">
+          <div style="position:absolute;top:-10px;right:12px;background:#6366f1;
+                      color:#fff;font-size:11px;font-weight:700;padding:2px 10px;
+                      border-radius:20px;">POPULER</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:700;font-size:15px;">🚀 Paket Pro</div>
+              <div style="color:#94a3b8;font-size:13px;margin-top:2px;">Unlimited Toko • Laporan Lanjutan</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:18px;font-weight:800;color:#818cf8;">Rp 99.000</div>
+              <div style="color:#94a3b8;font-size:12px;">/bulan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form email -->
+      <div style="margin-bottom:16px;">
+        <input id="upgradeEmail" type="email" placeholder="Masukkan email Anda"
+          style="width:100%;box-sizing:border-box;padding:12px 16px;border-radius:8px;
+                 border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);
+                 color:#fff;font-size:14px;outline:none;margin-bottom:10px;"
+          oninput="document.getElementById('upgradeEmailHint').style.display='none'" />
+        <p id="upgradeEmailHint" style="display:none;color:#f87171;font-size:12px;margin:0 0 8px;">
+          Masukkan email yang valid terlebih dahulu.
+        </p>
+        <button onclick="window.__kasirme.requestUpgrade()"
+          style="width:100%;padding:14px;border:none;border-radius:8px;
+                 background:linear-gradient(90deg,#6366f1,#8b5cf6);
+                 color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+          💳 Hubungi Kami untuk Upgrade
+        </button>
+      </div>
+
+      <div id="upgradeDeviceId" style="color:#475569;font-size:11px;margin-top:8px;"></div>
+
+      <!-- WhatsApp / kontak -->
+      <a id="upgradeWhatsapp" href="#" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;
+               color:#34d399;text-decoration:none;font-size:13px;font-weight:600;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                   -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463
+                   -2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606
+                   .134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371
+                   -.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51
+                   -.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016
+                   -1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487
+                   .709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719
+                   2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.523 5.847L0 24l6.302-1.496
+                   A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818
+                   a9.818 9.818 0 01-5.003-1.37l-.36-.213-3.732.885.937-3.638-.234-.374
+                   A9.77 9.77 0 012.182 12C2.182 6.59 6.59 2.182 12 2.182c5.41 0 9.818 4.408
+                   9.818 9.818 0 5.41-4.408 9.818-9.818 9.818z"/>
+        </svg>
+        Chat WhatsApp untuk bantuan
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
        MODALS
   ═══════════════════════════════════ -->
 

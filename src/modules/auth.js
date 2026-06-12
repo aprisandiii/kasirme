@@ -32,6 +32,8 @@ export const doLogin = async () => {
     await storage.setLastActive()
     startInactivityWatcher()
     _onLoginSuccess?.()
+    // Panggil trial callback jika ada (untuk banner trial)
+    window.__kasirme._onLoginSuccessCb?.()
   } else {
     if (errEl) errEl.innerHTML = '<div class="alert alert-red">Username atau password salah.</div>'
   }
