@@ -36,19 +36,68 @@ window.__kasirme.gotoLogin = () => {
   document.getElementById('loginScreen').style.display   = 'flex'
 }
 
+// ── PASSWORD RECOVERY (via PIN) ───────────────────
+window.__kasirme.openRecovery = () => {
+  document.getElementById('loginScreen').style.display    = 'none'
+  document.getElementById('recoveryScreen').style.display = 'flex'
+  const err = document.getElementById('recoveryErr')
+  if (err) err.innerHTML = ''
+}
+
+window.__kasirme.closeRecovery = () => {
+  document.getElementById('recoveryScreen').style.display = 'none'
+  document.getElementById('loginScreen').style.display    = 'flex'
+}
+
+window.__kasirme.doRecovery = async () => {
+  const pin    = document.getElementById('recoveryPin')?.value.trim()
+  const pass   = document.getElementById('recoveryNewPass')?.value
+  const pass2  = document.getElementById('recoveryNewPass2')?.value
+  const errEl  = document.getElementById('recoveryErr')
+
+  if (!state.settings.recoveryPin) {
+    errEl.innerHTML = '<div class="alert alert-red">PIN pemulihan belum diatur untuk akun ini. Hubungi admin/support.</div>'
+    return
+  }
+  if (pin !== state.settings.recoveryPin) {
+    errEl.innerHTML = '<div class="alert alert-red">PIN pemulihan salah.</div>'
+    return
+  }
+  if (!pass || pass.length < 6) {
+    errEl.innerHTML = '<div class="alert alert-red">Password baru minimal 6 karakter.</div>'
+    return
+  }
+  if (pass !== pass2) {
+    errEl.innerHTML = '<div class="alert alert-red">Konfirmasi password baru tidak cocok.</div>'
+    return
+  }
+
+  await updateSettings({ password: pass })
+  errEl.innerHTML = ''
+  document.getElementById('recoveryScreen').style.display = 'none'
+  document.getElementById('loginScreen').style.display    = 'flex'
+  document.getElementById('loginUser').value = state.settings.username || ''
+  document.getElementById('loginPass').value = ''
+  showToastDelayed('✓ Password berhasil direset. Silakan login dengan password baru.')
+}
+
 window.__kasirme.completeSetup = async () => {
   const nama  = document.getElementById('setupNamaToko')?.value.trim()
   const uname = document.getElementById('setupUsername')?.value.trim()
   const pass  = document.getElementById('setupPassword')?.value
   const pass2 = document.getElementById('setupPassword2')?.value
+  const pin   = document.getElementById('setupRecoveryPin')?.value.trim()
   const errEl = document.getElementById('setupErr')
 
   if (!nama)  { errEl.innerHTML = '<div class="alert alert-red">Nama toko wajib diisi.</div>'; return }
   if (!uname) { errEl.innerHTML = '<div class="alert alert-red">Username wajib diisi.</div>'; return }
   if (!pass || pass.length < 6) { errEl.innerHTML = '<div class="alert alert-red">Password minimal 6 karakter.</div>'; return }
   if (pass !== pass2) { errEl.innerHTML = '<div class="alert alert-red">Konfirmasi password tidak cocok.</div>'; return }
+  if (!pin || pin.length < 4 || pin.length > 6 || !/^\d+$/.test(pin)) {
+    errEl.innerHTML = '<div class="alert alert-red">PIN pemulihan wajib 4-6 digit angka.</div>'; return
+  }
 
-  await updateSettings({ namaToko: nama, username: uname, password: pass })
+  await updateSettings({ namaToko: nama, username: uname, password: pass, recoveryPin: pin })
   await storage.setFirstRunDone()
 
   document.getElementById('setupScreen').style.display = 'none'
