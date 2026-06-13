@@ -149,6 +149,6 @@ export const resetData = async () => {
   state.nextProdId    = 1
   state.nextTrxNum    = 1
 
-  await seed()
-  showToast('Data direset ke kondisi awal', 'amber')
+  await storage.save(state)
+  showToast('Data direset ke kondisi awal (kosong)', 'amber')
 }
