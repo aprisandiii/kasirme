@@ -278,7 +278,7 @@ export const checkout = () => {
 // ── STRUK ─────────────────────────────────────────
 export const showStruk = (t, uangDiterimaOverride) => {
   const s = state.settings
-  const line = '--------------------------------'
+  const line = '-------------------------'
   let txt = `${s.namaToko}\n${s.alamat}\n${s.kota} | Telp: ${s.telp}\n${line}\n`
   txt += `ID     : ${t.id}\nWaktu  : ${t.waktu}\nKasir  : ${s.adminNama || 'Admin'}\n`
   txt += `Plgn   : ${t.pelanggan}\nMetode : ${t.metode.toUpperCase()}\n${line}\n`
