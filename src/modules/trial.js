@@ -191,22 +191,8 @@ export async function saveTrialEmail(email) {
   )
 }
 
-/**
- * Tandai sebagai berbayar (panggil dari webhook payment Anda,
- * atau secara manual dari Supabase dashboard).
- * Untuk testing, Anda bisa panggil fungsi ini langsung di console.
- */
-export async function markAsPaid(plan = 'basic') {
-  const deviceId = getDeviceId()
-  await supabaseFetch(
-    `${TABLE}?device_id=eq.${encodeURIComponent(deviceId)}`,
-    {
-      method: 'PATCH',
-      body: JSON.stringify({ status: 'paid', plan }),
-    }
-  )
-  // Hapus cache supaya saat refresh baca dari Supabase
-  localStorage.removeItem('km_trial_cache')
-}
+// Catatan: penandaan status 'paid' TIDAK dilakukan dari client.
+// Update status pembayaran hanya lewat Supabase SQL Editor / dashboard
+// (lihat kasirme_sql_reference.sql), agar tidak bisa di-bypass oleh user.
 
 export const getDeviceIdPublic = getDeviceId
