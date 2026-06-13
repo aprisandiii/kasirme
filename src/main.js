@@ -143,25 +143,26 @@ const showTrialBanner = (daysLeft) => {
 
 window.__kasirme.showUpgradeScreen = () => showLockedScreen()
 
-window.__kasirme.requestUpgrade = async () => {
+window.__kasirme.requestUpgrade = () => {
   const emailEl = document.getElementById('upgradeEmail')
   const email   = emailEl?.value?.trim()
   if (!email || !email.includes('@')) {
     document.getElementById('upgradeEmailHint').style.display = 'block'
     return
   }
-  try {
-    await saveTrialEmail(email)
-    const did = getDeviceIdPublic()
-    const wa  = document.getElementById('upgradeWhatsapp')
-    if (wa) {
-      const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nPaket: ${PLAN_INFO[_selectedPlan].label}\nEmail: ${email}\nDevice ID: ${did}`)
-      wa.href = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
-      wa.click()
-    }
-  } catch {
-    alert('Gagal menyimpan email. Silakan coba lagi atau hubungi kami langsung.')
+  const did = getDeviceIdPublic()
+  const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nPaket: ${PLAN_INFO[_selectedPlan].label}\nEmail: ${email}\nDevice ID: ${did}`)
+  const url = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
+
+  // Buka tab WA segera (sebagai respons langsung klik user, hindari popup blocker)
+  const win = window.open(url, '_blank', 'noopener')
+  if (!win) {
+    // Fallback jika tetap diblokir: arahkan tab saat ini
+    window.location.href = url
   }
+
+  // Simpan email ke Supabase di belakang (tidak menghambat redirect WA)
+  saveTrialEmail(email).catch(() => {})
 }
 
 // ── BOOT ─────────────────────────────────────────
