@@ -16,8 +16,8 @@
 // ═══════════════════════════════════════════════════
 //  KONFIGURASI — GANTI INI DENGAN MILIK ANDA
 // ═══════════════════════════════════════════════════
-const SUPABASE_URL      = 'https://wmisubzdblpzrcvsaswe.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtaXN1YnpkYmxwenJjdnNhc3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjA3MDQsImV4cCI6MjA5NjgzNjcwNH0.yEpH_qYHJhhr-WO2aCy7cgVBen2o2jU_VMSVHwod2FI'
+const SUPABASE_URL      = 'https://YOUR_PROJECT_ID.supabase.co'
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY'
 const TRIAL_DAYS        = 7   // ubah ke 14 jika ingin 14 hari
 
 // ═══════════════════════════════════════════════════
@@ -105,8 +105,12 @@ export async function initTrial() {
 function buildTrialInfo(record, deviceId) {
   const trialStart = new Date(record.trial_start)
   const now        = new Date()
-  const elapsed    = Math.floor((now - trialStart) / (1000 * 60 * 60 * 24)) // hari
-  const daysLeft   = Math.max(0, TRIAL_DAYS - elapsed)
+  // Bandingkan berdasarkan tanggal kalender (UTC) agar tidak terpengaruh
+  // selisih jam/timezone yang bisa membuat 'elapsed' lompat 1 hari lebih cepat
+  const startUTC = Date.UTC(trialStart.getUTCFullYear(), trialStart.getUTCMonth(), trialStart.getUTCDate())
+  const nowUTC   = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  const elapsed  = Math.max(0, Math.round((nowUTC - startUTC) / 86400000)) // hari
+  const daysLeft = Math.max(0, TRIAL_DAYS - elapsed)
   const isPaid     = record.status === 'paid'
 
   // Simpan cache lokal
@@ -132,8 +136,11 @@ function buildOfflineFallback(deviceId) {
     const cache = JSON.parse(localStorage.getItem('km_trial_cache') || '{}')
     if (cache.trialStart) {
       const trialStart = new Date(cache.trialStart)
-      const elapsed    = Math.floor((Date.now() - trialStart) / 86400000)
-      const daysLeft   = Math.max(0, TRIAL_DAYS - elapsed)
+      const startUTC = Date.UTC(trialStart.getUTCFullYear(), trialStart.getUTCMonth(), trialStart.getUTCDate())
+      const nowD     = new Date()
+      const nowUTC   = Date.UTC(nowD.getUTCFullYear(), nowD.getUTCMonth(), nowD.getUTCDate())
+      const elapsed  = Math.max(0, Math.round((nowUTC - startUTC) / 86400000))
+      const daysLeft = Math.max(0, TRIAL_DAYS - elapsed)
       const isPaid     = cache.status === 'paid'
       return {
         status:     isPaid ? 'paid' : daysLeft > 0 ? 'active' : 'expired',
