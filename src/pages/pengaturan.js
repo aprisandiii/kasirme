@@ -14,6 +14,7 @@ export const loadSettingForm = () => {
   set('settAdminNama', s.adminNama || 'Admin')
   set('settUsername',  s.username  || 'admin')
   set('settPassword',  '')
+  set('settRecoveryPin', s.recoveryPin || '')
   set('settSessionTimeout', s.sessionTimeout ?? 30)
 }
 
@@ -41,12 +42,17 @@ export const updateAkun = () => {
   const nama   = document.getElementById('settAdminNama')?.value.trim()
   const uname  = document.getElementById('settUsername')?.value.trim()
   const pass   = document.getElementById('settPassword')?.value
+  const pin    = document.getElementById('settRecoveryPin')?.value.trim()
 
   if (!nama || !uname) { alert('Nama dan username wajib diisi'); return }
   if (pass && pass.length < 6) { alert('Password baru minimal 6 karakter'); return }
+  if (pin && (pin.length < 4 || pin.length > 6 || !/^\d+$/.test(pin))) {
+    alert('PIN pemulihan harus 4-6 digit angka'); return
+  }
 
   const updates = { adminNama: nama, username: uname }
   if (pass) updates.password = pass
+  if (pin)  updates.recoveryPin = pin
   updateSettings(updates)
 
   const badge = document.getElementById('userBadge')
