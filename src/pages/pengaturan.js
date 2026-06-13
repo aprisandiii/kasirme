@@ -129,10 +129,36 @@ export const handleImportFile = (e) => {
   const r    = new FileReader()
   r.onload   = async (ev) => {
     try {
-      const data = JSON.parse(ev.target.result)
-      if (!data.products || !data.transactions) { alert('Format backup tidak valid'); return }
-      if (!confirm('Import akan menimpa semua data saat ini. Lanjutkan?')) return
-      await storage.importAll(state, ev.target.result)
+      const raw  = ev.target.result
+      const data = JSON.parse(raw)
+
+      // Validasi struktur wajib
+      if (!Array.isArray(data.products) || !Array.isArray(data.transactions)) {
+        alert('Format backup tidak valid: file tidak mengandung data produk atau transaksi yang benar.'); return
+      }
+      // Tolak file dari versi lama yang tidak kompatibel
+      if (data.version !== undefined && data.version < 2) {
+        alert(`Format backup versi ${data.version} tidak kompatibel. Gunakan file backup yang lebih baru.`); return
+      }
+      // Validasi tipe dasar tiap produk (cegah file JSON asal-asalan)
+      const badProd = data.products.find(p => typeof p.id === 'undefined' || typeof p.nama !== 'string')
+      if (badProd) { alert('File backup mengandung data produk yang tidak valid.'); return }
+
+      // Tampilkan preview ringkas sebelum overwrite
+      const tgl = data.exportedAt
+        ? new Date(data.exportedAt).toLocaleString('id-ID')
+        : 'tidak diketahui'
+      const preview = [
+        `📦 Backup tertanggal : ${tgl}`,
+        `   Produk            : ${data.products.length} item`,
+        `   Transaksi         : ${data.transactions.length} transaksi`,
+        '',
+        '⚠️  Import akan MENIMPA semua data saat ini.',
+        'Lanjutkan?',
+      ].join('\n')
+      if (!confirm(preview)) return
+
+      await storage.importAll(state, raw)
       loadSettingForm()
       showToast('✓ Data berhasil diimport')
     } catch (err) {
