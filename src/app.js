@@ -20,7 +20,7 @@ import { loadSettingForm, saveSetting, updateAkun,
          renderKategoriSettings, tambahKategori, hapusKategori,
          exportData, importData, handleImportFile, resetData,
          saveSessionTimeout, savePaperSize }       from './pages/pengaturan.js'
-
+ 
 // ── PAGE MAP ──────────────────────────────────────
 const PAGES = {
   dashboard:    { title: 'Dashboard',          onEnter: renderDashboard },
