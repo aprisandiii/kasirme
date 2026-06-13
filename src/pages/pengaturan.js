@@ -16,6 +16,7 @@ export const loadSettingForm = () => {
   set('settPassword',  '')
   set('settRecoveryPin', s.recoveryPin || '')
   set('settSessionTimeout', s.sessionTimeout ?? 30)
+  set('settPaperSize', s.paperSize || '80')
 }
 
 export const saveSetting = () => {
@@ -67,7 +68,12 @@ export const saveSessionTimeout = () => {
   updateSettings({ sessionTimeout: val })
   showToast('✓ Pengaturan sesi disimpan')
 }
-
+// ── STRUK / PRINTER ────────────────────────────────
+export const savePaperSize = () => {
+  const val = document.getElementById('settPaperSize')?.value || '80'
+  updateSettings({ paperSize: val })
+  showToast('✓ Ukuran kertas struk disimpan')
+}
 // ── KATEGORI ──────────────────────────────────────
 export const renderKategoriSettings = () => {
   const el = document.getElementById('kategoriList')
