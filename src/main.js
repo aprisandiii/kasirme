@@ -107,11 +107,8 @@ window.__kasirme.completeSetup = async () => {
   showToastDelayed('✓ Setup berhasil! Silakan login dengan akun baru kamu.')
 }
 
-window.__kasirme.skipSetup = async () => {
-  await storage.setFirstRunDone()
-  document.getElementById('setupScreen').style.display = 'none'
-  renderLogin()
-}
+// [KEAMANAN] skipSetup dihapus — user wajib mengisi Setup Wizard.
+// Tombol "Lewati" di HTML sudah dihapus.
 
 const showToastDelayed = (msg) => {
   setTimeout(() => {
@@ -135,6 +132,9 @@ window.__kasirme.toggleDarkMode = async () => {
 }
 
 // ── TRIAL SYSTEM ───────────────────────────────────
+// ✏️  Ganti nomor WA di SATU tempat ini saja
+const WA_NUMBER = '6285798132246'
+
 let _trialInfo = null
 let _selectedPlan = 'bulanan' // default
 
@@ -175,7 +175,7 @@ const showLockedScreen = () => {
   const wa = document.getElementById('upgradeWhatsapp')
   if (wa) {
     const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nPaket: ${PLAN_INFO[_selectedPlan].label}\nDevice ID: ${did}`)
-    wa.href = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
+    wa.href = `https://wa.me/${WA_NUMBER}?text=${msg}`
   }
 }
 
@@ -201,7 +201,7 @@ window.__kasirme.requestUpgrade = () => {
   }
   const did = getDeviceIdPublic()
   const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nPaket: ${PLAN_INFO[_selectedPlan].label}\nEmail: ${email}\nDevice ID: ${did}`)
-  const url = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
+  const url = `https://wa.me/${WA_NUMBER}?text=${msg}`
 
   // Buka tab WA segera (sebagai respons langsung klik user, hindari popup blocker)
   const win = window.open(url, '_blank', 'noopener')
