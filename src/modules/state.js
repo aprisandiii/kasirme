@@ -14,6 +14,7 @@ const DEFAULT_SETTINGS = {
   kategori:   ['Makanan','Minuman','Snack','Rokok','ATK','Kebersihan','Elektronik','Lainnya'],
   darkMode:   false,
   sessionTimeout: 30, // menit, 0 = tidak pernah
+  paperSize: '80', // '80' atau '58' (mm), ukuran struk thermal
 }
 
 export const state = {
