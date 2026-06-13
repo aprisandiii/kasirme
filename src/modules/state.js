@@ -34,6 +34,10 @@ export const load = async () => {
 
 export const seed = async () => {
   if (state.products.length > 0) return
+  // Jika bukan firstRun (user sudah pernah setup), jangan isi data dummy.
+  // Ini mencegah data dummy muncul lagi setelah user melakukan reset data.
+  const isFirst = await storage.isFirstRun()
+  if (!isFirst) return
 
   const products = [
     { nama: 'Mie Goreng Indomie',   kategori: 'Makanan',    harga: 3500,  modal: 2500,  stok: 48, stokMin: 10, kode: '' },
