@@ -87,12 +87,35 @@ window.__kasirme.toggleDarkMode = async () => {
 
 // ── TRIAL SYSTEM ───────────────────────────────────
 let _trialInfo = null
+let _selectedPlan = 'bulanan' // default
+
+const PLAN_INFO = {
+  bulanan: { label: 'KasirMe Basic - Bulanan (Rp 49.000/bulan)' },
+  tahunan: { label: 'KasirMe Basic - Tahunan (Rp 490.000/tahun)' },
+}
+
+const updatePlanCardStyles = () => {
+  const monthly = document.getElementById('planMonthly')
+  const yearly  = document.getElementById('planYearly')
+  if (!monthly || !yearly) return
+  const active   = 'background:rgba(99,102,241,0.15);border:2px solid #6366f1;border-radius:12px;padding:16px;text-align:left;cursor:pointer;position:relative;'
+  const inactive = 'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;text-align:left;cursor:pointer;position:relative;'
+  monthly.style.cssText = _selectedPlan === 'bulanan' ? active : inactive
+  yearly.style.cssText  = _selectedPlan === 'tahunan' ? active : inactive
+}
+
+window.__kasirme.selectPlan = (plan) => {
+  _selectedPlan = plan
+  updatePlanCardStyles()
+}
 
 const showLockedScreen = () => {
   document.getElementById('lockedScreen').style.display = 'flex'
   document.getElementById('appShell').style.display     = 'none'
   document.getElementById('loginScreen').style.display  = 'none'
   document.getElementById('landingScreen').style.display = 'none'
+
+  updatePlanCardStyles()
 
   // Tampilkan device ID sebagai referensi untuk support
   const did = getDeviceIdPublic()
@@ -102,7 +125,7 @@ const showLockedScreen = () => {
   // Isi link WhatsApp (ganti nomor sesuai milik Anda)
   const wa = document.getElementById('upgradeWhatsapp')
   if (wa) {
-    const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nDevice ID: ${did}`)
+    const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nPaket: ${PLAN_INFO[_selectedPlan].label}\nDevice ID: ${did}`)
     wa.href = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
   }
 }
@@ -132,8 +155,8 @@ window.__kasirme.requestUpgrade = async () => {
     const did = getDeviceIdPublic()
     const wa  = document.getElementById('upgradeWhatsapp')
     if (wa) {
-      const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nEmail: ${email}\nDevice ID: ${did}`)
-      wa.href = `https://wa.me/628XXXXXXXXXX?text=${msg}` // ← ganti nomor WA
+      const msg = encodeURIComponent(`Halo, saya ingin upgrade KasirMe.\nPaket: ${PLAN_INFO[_selectedPlan].label}\nEmail: ${email}\nDevice ID: ${did}`)
+      wa.href = `https://wa.me/6285798132246?text=${msg}` // ← ganti nomor WA
       wa.click()
     }
   } catch {
