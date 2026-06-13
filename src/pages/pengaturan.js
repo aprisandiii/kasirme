@@ -68,13 +68,13 @@ export const saveSessionTimeout = () => {
   updateSettings({ sessionTimeout: val })
   showToast('✓ Pengaturan sesi disimpan')
 }
+
 // ── STRUK / PRINTER ────────────────────────────────
 export const savePaperSize = () => {
   const val = document.getElementById('settPaperSize')?.value || '80'
   updateSettings({ paperSize: val })
   showToast('✓ Ukuran kertas struk disimpan')
 }
-// ── KATEGORI ──────────────────────────────────────
 export const renderKategoriSettings = () => {
   const el = document.getElementById('kategoriList')
   if (!el) return
@@ -148,13 +148,14 @@ export const resetData = async () => {
   if (!confirm('Yakin? Ketik OK pada dialog berikutnya untuk konfirmasi terakhir.')) return
   if (!confirm('KONFIRMASI TERAKHIR: Semua produk, transaksi, dan riwayat stok akan dihapus permanen. Lanjutkan?')) return
 
-  await storage.clear()
   state.products      = []
   state.transactions  = []
   state.stokLog       = []
   state.nextProdId    = 1
   state.nextTrxNum    = 1
 
+  // Simpan ulang produk/transaksi/stokLog kosong, TANPA menghapus
+  // setting akun (username/password/recoveryPin) atau flag firstRun.
   await storage.save(state)
   showToast('Data direset ke kondisi awal (kosong)', 'amber')
 }
