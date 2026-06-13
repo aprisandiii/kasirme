@@ -19,7 +19,7 @@ import { renderStokSelect, updateStokInfo,
 import { loadSettingForm, saveSetting, updateAkun,
          renderKategoriSettings, tambahKategori, hapusKategori,
          exportData, importData, handleImportFile, resetData,
-         saveSessionTimeout }                     from './pages/pengaturan.js'
+         saveSessionTimeout, savePaperSize }       from './pages/pengaturan.js'
 
 // ── PAGE MAP ──────────────────────────────────────
 const PAGES = {
@@ -110,7 +110,7 @@ window.__kasirme = {
   // Pengaturan
   saveSetting, updateAkun, tambahKategori, hapusKategori,
   exportData, importData, handleImportFile, resetData,
-  saveSessionTimeout,
+  saveSessionTimeout, savePaperSize,
   closeModal: (id) => document.getElementById(id)?.classList.add('hidden'),
 }
 
