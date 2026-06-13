@@ -17,7 +17,7 @@
 //  KONFIGURASI — GANTI INI DENGAN MILIK ANDA
 // ═══════════════════════════════════════════════════
 const SUPABASE_URL      = 'https://wmisubzdblpzrcvsaswe.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtaXN1YnpkYmxwenJjdnNhc3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjA3MDQsImV4cCI6MjA5NjgzNjcwNH0.yEpH_qYHJhhr-WO2aCy7cgVBen2o2jU_VMSVHwod2FI'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtaXN1YnpkYmxwenJjdnNhc3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3Mzg4MjQsImV4cCI6MjA3MzMxNDgyNH0.yEpH_qYHJhhr-WO2aCy7cgVBen2o2jU_VMSVHwod2FI'
 const TRIAL_DAYS        = 7   // ubah ke 14 jika ingin 14 hari
 
 // ═══════════════════════════════════════════════════
@@ -111,19 +111,30 @@ function buildTrialInfo(record, deviceId) {
   const nowUTC   = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
   const elapsed  = Math.max(0, Math.round((nowUTC - startUTC) / 86400000)) // hari
   const daysLeft = Math.max(0, TRIAL_DAYS - elapsed)
-  const isPaid     = record.status === 'paid'
+  const isPaid = record.status === 'paid'
+
+  // Jika paid tapi sudah lewat paid_until -> anggap expired (perlu perpanjang)
+  let effectiveStatus
+  if (isPaid) {
+    const paidUntil = record.paid_until ? new Date(record.paid_until) : null
+    effectiveStatus = (paidUntil && now > paidUntil) ? 'expired' : 'paid'
+  } else {
+    effectiveStatus = daysLeft > 0 ? 'active' : 'expired'
+  }
 
   // Simpan cache lokal
   localStorage.setItem('km_trial_cache', JSON.stringify({
     trialStart: record.trial_start,
     status:     record.status,
+    paidUntil:  record.paid_until || null,
     cached_at:  Date.now(),
   }))
 
   return {
-    status:     isPaid ? 'paid' : daysLeft > 0 ? 'active' : 'expired',
+    status:     effectiveStatus,
     daysLeft,
     trialStart: record.trial_start,
+    paidUntil:  record.paid_until || null,
     deviceId,
     email:      record.email || null,
     plan:       record.plan  || null,
@@ -142,10 +153,18 @@ function buildOfflineFallback(deviceId) {
       const elapsed  = Math.max(0, Math.round((nowUTC - startUTC) / 86400000))
       const daysLeft = Math.max(0, TRIAL_DAYS - elapsed)
       const isPaid     = cache.status === 'paid'
+      let effectiveStatus
+      if (isPaid) {
+        const paidUntil = cache.paidUntil ? new Date(cache.paidUntil) : null
+        effectiveStatus = (paidUntil && Date.now() > paidUntil.getTime()) ? 'expired' : 'paid'
+      } else {
+        effectiveStatus = daysLeft > 0 ? 'active' : 'expired'
+      }
       return {
-        status:     isPaid ? 'paid' : daysLeft > 0 ? 'active' : 'expired',
+        status:     effectiveStatus,
         daysLeft,
         trialStart: cache.trialStart,
+        paidUntil:  cache.paidUntil || null,
         deviceId,
         email:      null,
         plan:       null,
