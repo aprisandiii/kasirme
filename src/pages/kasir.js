@@ -278,7 +278,7 @@ export const checkout = () => {
 // ── STRUK ─────────────────────────────────────────
 export const showStruk = (t, uangDiterimaOverride) => {
   const s = state.settings
-  const line = '================================'
+  const line = '----------------------------------------'
   let txt = `${s.namaToko}\n${s.alamat}\n${s.kota} | Telp: ${s.telp}\n${line}\n`
   txt += `ID     : ${t.id}\nWaktu  : ${t.waktu}\nKasir  : ${s.adminNama || 'Admin'}\n`
   txt += `Plgn   : ${t.pelanggan}\nMetode : ${t.metode.toUpperCase()}\n${line}\n`
@@ -304,5 +304,19 @@ export const showStruk = (t, uangDiterimaOverride) => {
   openModal('modalStruk')
 }
 
-export const printStruk = () => window.print()
+export const printStruk = () => {
+  const size = state.settings.paperSize === '58' ? '58' : '80'
+  document.body.classList.toggle('paper-58', size === '58')
+
+  // Set ukuran halaman cetak secara dinamis (@page tidak bisa di-nest dalam CSS)
+  let styleEl = document.getElementById('dynamicPrintPage')
+  if (!styleEl) {
+    styleEl = document.createElement('style')
+    styleEl.id = 'dynamicPrintPage'
+    document.head.appendChild(styleEl)
+  }
+  styleEl.textContent = `@media print { @page { size: ${size}mm auto; margin: 0; } }`
+
+  window.print()
+}
 export const getCart    = () => cart
