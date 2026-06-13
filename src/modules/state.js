@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
   adminNama:  'Admin',
   username:   'admin',
   password:   'admin123',
+  recoveryPin: '0000', // default untuk akun "Lewati" — sarankan diganti
   kategori:   ['Makanan','Minuman','Snack','Rokok','ATK','Kebersihan','Elektronik','Lainnya'],
   darkMode:   false,
   sessionTimeout: 30, // menit, 0 = tidak pernah
