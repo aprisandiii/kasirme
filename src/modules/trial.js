@@ -16,8 +16,8 @@
 // ═══════════════════════════════════════════════════
 //  KONFIGURASI — GANTI INI DENGAN MILIK ANDA
 // ═══════════════════════════════════════════════════
-const SUPABASE_URL      = 'https://wmisubzdblpzrcvsaswe.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1dnNtbmpiaHJ5Y2NkbmxzaGNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNjAzMzksImV4cCI6MjA5NTkzNjMzOX0.AnRXhqFPrEmhg_2vDkiw3nuZfA7YzqXEfaHAxAiawMA'
+const SUPABASE_URL      = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 const TRIAL_DAYS        = 7   // ubah ke 14 jika ingin 14 hari
 
 // ═══════════════════════════════════════════════════
