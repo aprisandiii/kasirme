@@ -4,6 +4,7 @@ import './styles/components.css'
 import './styles/layout.css'
 import './styles/pages.css'
 
+import { maybeShowEmailPopup } from './modules/email-popup.js'
 import { load, seed, state, updateSettings }  from './modules/state.js'
 import { storage, migrateFromLocalStorage }    from './modules/storage.js'
 import { renderLogin, doLogin, checkSessionExpiry } from './modules/auth.js'
@@ -223,6 +224,7 @@ window.__kasirme.requestUpgrade = () => {
 
   // --- Cek status trial dari Supabase ---
   _trialInfo = await initTrial()
+  await maybeShowEmailPopup(_trialInfo)
 
   if (_trialInfo.status === 'expired') {
     showLockedScreen()
