@@ -65,7 +65,7 @@ function _buildOverlay(resolve) {
       <h2 id="kmEmailPopupTitle">Selamat Datang di KasirMe!</h2>
       <p id="kmEmailPopupDesc">
         Masukkan email kamu agar kami bisa mengirimkan info penting seputar
-        akun dan masa trial kamu (${trialInfo?.daysLeft ?? 7} hari gratis).
+akun dan masa trial kamu (7 hari gratis).
       </p>
 
       <input
