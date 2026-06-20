@@ -82,19 +82,12 @@ akun dan masa trial kamu (7 hari gratis).
       <button id="kmEmailSubmit">
         <i class="ti ti-send"></i> Mulai Trial Gratis
       </button>
-      <button id="kmEmailSkip">Lewati, masukkan nanti</button>
     </div>
   `
 
   // Submit
   overlay.querySelector('#kmEmailSubmit').addEventListener('click', () => {
     _handleSubmit(overlay, resolve)
-  })
-
-  // Skip
-  overlay.querySelector('#kmEmailSkip').addEventListener('click', () => {
-    localStorage.setItem(STORAGE_KEY, 'skipped')
-    _removeOverlay(overlay, resolve)
   })
 
   // Enter key
